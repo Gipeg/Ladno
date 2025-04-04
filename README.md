@@ -1,4 +1,4 @@
-import xml.etree.ElementTree as ET
+ import xml.etree.ElementTree as ET
 import wave
 import sqlite3
 import os
@@ -7,12 +7,14 @@ import os
 xml_file = 'example.xml'
 try:
     if os.path.exists(xml_file):
+        if os.path.getsize(xml_file) == 0:
+            raise ET.ParseError("Файл пустой")
+
         tree = ET.parse(xml_file)
         root = tree.getroot()
         for elem in root.iter():
             print(elem.tag, elem.text)
 
-        # Пример модификации
         for child in root:
             if child.text:
                 child.text += ' [изменено]'
@@ -27,6 +29,8 @@ try:
         tree = ET.ElementTree(root)
         tree.write(xml_file, encoding='utf-8', xml_declaration=True)
         print("Новый XML файл создан.")
+except ET.ParseError as e:
+    print(f"Ошибка разбора XML: {e}")
 except Exception as e:
     print(f"Ошибка при работе с XML: {e}")
 
